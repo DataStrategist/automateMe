@@ -31,8 +31,8 @@
 #' @export
 #' @importFrom amitFuncs right
 createAssets <- function(file, ultimatePath = getwd(),
-                         commandCenterPath = getwd(), min, h,
-                         dayOfMonth, month, dayOfWeek){
+                         commandCenterPath = getwd(), min = "*", h = "*",
+                         dayOfMonth = "*", month = "*", dayOfWeek = "*"){
   ## get extensionless name
   rawName <- gsub("\\.[Rr]$", "", file)
 
