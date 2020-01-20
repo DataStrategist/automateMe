@@ -63,7 +63,7 @@ createAssets <- function(file, ultimatePath = getwd(),
                     paste0(ultimatePath, "/", rawName, ".timeRun.txt 2>&1"))
 
   ## Done, output all
-  cat("All done, now give your runner permissions by typing this!:\n",
+  cat("All done, now give your runner permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
       "sudo chmod 777", paste0(ultimatePath, "/", rawName, ".sh\n\n"),
       "and add your new runner to your crontab by typing crontab -e",
       "and pressing 'I' to enter INSERT mode:\n\n",
