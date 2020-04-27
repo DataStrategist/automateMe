@@ -33,6 +33,7 @@
 createAssets <- function(file, ultimatePath = getwd(),
                          commandCenterPath = getwd(), min = "*", h = "*",
                          dayOfMonth = "*", month = "*", dayOfWeek = "*"){
+  # browser()
   ## get extensionless name
   rawName <- gsub("\\.[Rr]$", "", file)
 
@@ -40,7 +41,9 @@ createAssets <- function(file, ultimatePath = getwd(),
   if (amitFuncs::right(file, 2) == ".r") file <- paste0(rawName, ".R")
   if (amitFuncs::right(file, 2) != ".R") file <- paste0(rawName, ".R")
 
-  ## Create sh file
+
+# Create sh file ----------------------------------------------------------
+
   shContent <- paste0(
   "START=$(date +%s)
 
@@ -52,23 +55,29 @@ createAssets <- function(file, ultimatePath = getwd(),
   END=$(date +%s)
   DIFF=$(( $END - $START ))
   echo \"XXX ETLer $START $DIFF\"")
+
   cat(shContent, file = paste0(ultimatePath, "/", rawName, ".sh"))
 
-  ## Create log file
-  cat("", file = paste0(ultimatePath, "/", rawName, ".log"))
 
-  ## Create cronTab entry
+# Create log files ---------------------------------------------------------
+
+  cat("", file = paste0(ultimatePath, "/", rawName, ".log"))
+  cat("", file = paste0(commandCenterPath, "/", rawName, ".timeRun.txt"))
+
+# Create cronTab entry ----------------------------------------------------
+
   cronTab <- paste0(min, " ", h," ", dayOfMonth, " ", month, " ", dayOfWeek,
                     " ", paste0(ultimatePath, "/", rawName, ".sh"), " >> ",
-                    paste0(ultimatePath, "/", rawName, ".timeRun.txt 2>&1"))
+                    paste0(commandCenterPath, "/", rawName, ".timeRun.txt 2>&1"))
 
   ## Done, output all
-  cat("All done, now give your runner permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
-      "sudo chmod 777", paste0(ultimatePath, "/", rawName, ".sh\n\n"),
-      "and add your new runner to your crontab by typing crontab -e",
-      "and pressing 'I' to enter INSERT mode:\n\n",
-      cronTab,
-      "\n\n and then to save and exit type ':wq'")
+  cat("######## All done, now give your runner permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
+      "sudo chmod 777",
+      paste0(ultimatePath, "/", rawName, ".sh")," ",
+      paste0(ultimatePath, "/", rawName, ".log"), " ",
+      paste0(commandCenterPath, "/", rawName, ".timeRun.txt"),
+      "\n\n######## and add your new runner to your crontab by typing crontab -e\n",
+      cronTab)
 }
 
 #' @title analyze the crontab to check when things are running
@@ -128,6 +137,7 @@ crontabAnalyzer <- function(folderContainingTimeLogs ){
           axis.text.x = ggplot2::element_blank(),
           axis.ticks.x = ggplot2::element_blank())
 }
+
 
 
 
