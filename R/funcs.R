@@ -103,7 +103,7 @@ createAssets <- function(file, ultimatePath = getwd(),
 #' @importFrom dplyr filter select %>%
 #' @importFrom ggplot2 ggplot geom_segment theme element_blank
 #' @importFrom lubridate
-crontabAnalyzer <- function(folderContainingTimeLogs, ){
+crontabAnalyzer <- function(folderContainingTimeLogs ){
 
   ## Load files
   text <- list.files(folderContainingTimeLogs, pattern = "timeRun",
