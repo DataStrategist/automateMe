@@ -100,13 +100,14 @@ createAssets <- function(file, ultimatePath = getwd(),
 #' @export
 #' @importFrom purrr map
 #' @importFrom tibble tibble
-#' @importFrom dplyr filter select
+#' @importFrom dplyr filter select %>%
 #' @importFrom ggplot2 ggplot geom_segment theme element_blank
+#' @importFrom lubridate
 crontabAnalyzer <- function(folderContainingTimeLogs ){
 
   ## Load files
   text <- list.files(folderContainingTimeLogs, pattern = "timeRun",
-                     full.names = TRUE) %>%
+                     full.names = TRUE, recursive = TRUE) %>%
     purrr::map(file) %>% map(readLines) %>% unlist
 
   ## Into df
@@ -123,7 +124,7 @@ crontabAnalyzer <- function(folderContainingTimeLogs ){
            name = gsub(".+/(.+).sh.+", "\\1", text) %>%
              gsub("XXX ", "", .) %>%
              gsub(" .+", "", .),
-           int = interval(sdt, edt)) %>%
+           int = lubridate::interval(sdt, edt)) %>%
     ## Grab only the last 24 hours of stuff, and only if it starts w/ XXX:
     dplyr::filter(edt > Sys.time() - 3600 * 24, substr(script,1,3) == "XXX") %>%
     dplyr::select(name, sdt, edt, st, et, int)
