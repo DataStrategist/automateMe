@@ -144,4 +144,32 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "O
 }
 
 
+#' @title create a commandcenter file
+#' @description FUNCTION_DESCRIPTION
+#' @param pathToRuns path to all the runner folders, Default: '..'
+#' @param hrs how many hours ago, Default: 24
+#' @param outputFolders what do you name your output folders?, Default: 'Outputs'
+#' @param ccFolder what is the name of the folder for your commandcenter?, Default: 'cc'
+#' @return outputs a file in the commandcenter
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[rmarkdown]{render}}
+#' @rdname commandCenterCreater
+#' @export
+#' @importFrom rmarkdown render
+commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "Outputs", ccFolder = "cc"){
+  # create folder w/ commandcenter inside
+  rmarkdown::render("ccDrafft.Rmd", params = list(
+    pathToRuns,hrs, outputFolders, ccFolder
+  ))
+  # output code
+}
+
+
 

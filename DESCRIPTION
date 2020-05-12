@@ -1,7 +1,7 @@
 Package: automateMe
 Type: Package
 Title: Package to assist in the linux automation of R scripts
-Version: 0.2
+Version: 0.3
 Author: person(given = "Amit", family = "Kohli",
            role = c("aut", "cre"),
            email = "mexindian@gmail.com")
