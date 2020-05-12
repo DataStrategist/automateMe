@@ -1,0 +1,62 @@
+---
+title: "commandcenterTemplate"
+output: html_document
+parameters:
+  - pathToRuns
+  - hrs
+  - outputFolders
+---
+
+## Overall Status:
+```{r setup, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse, verbose = FALSE, quietly = TRUE)
+options(scipen = 999)
+```
+
+```{r overall, warning=FALSE, echo=FALSE}
+text <- list.files(pathToRuns, pattern = ".log",
+                     full.names = TRUE, recursive = TRUE) %>% set_names %>% 
+    map(file) %>% map(readLines) %>% enframe
+
+text %>% unnest(value) %>% filter(grepl(" [eE]rror", value)) %>% 
+  group_by(name) %>% unique %>% rename(error = value) %>% gt::gt()
+```
+
+## Last runs:
+```{r lastRuns, warning=FALSE, echo=FALSE}
+text <- list.files(pathToRuns, pattern = "timeRun",
+                     full.names = TRUE, recursive = TRUE) %>%
+    map(file) %>% map(readLines) %>% unlist
+
+  ## Into df
+df <-
+  tibble(script = gsub(" [0-9]{10}.+", "", text),
+                 sdt = text %>%
+                   gsub(".+([0-9]{10}).+", "\\1", .) %>% as.numeric %>%
+                   as.POSIXct(., origin = "1970-01-01",tz = "GMT"),
+                 runtime = gsub(".+ ", "", text) %>%
+                   as.numeric,
+                 name = gsub(".+/(.+).sh.+", "\\1", text) %>%
+                   gsub("XXX ", "", .) %>%
+                   gsub(" .+", "", .)) %>%
+  ## Grab only the last 24 hours of stuff, and only if it starts w/ XXX:
+filter(sdt > Sys.time() - 3600 * hrs, substr(script,1,3) == "XXX") %>%
+select(name, sdt, runtime)
+
+df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line()
+```
+
+## latest outputs:
+```{r}
+text <- list.dirs(path = pathToRuns) %>% grep(pattern = paste0(outputFolders, "$"), value = TRUE)
+text <- text %>% set_names %>% map(list.files, full.names = TRUE) %>% enframe %>% unnest(value)
+runs <- text$value %>% map(file.info) %>% map(rownames_to_column) %>% bind_rows %>% 
+  mutate(howLong = Sys.time()-mtime)
+
+text <- left_join(text, runs, by = c("value" = "rowname"))
+
+text %>% 
+  group_by(name) %>% summarize(max = max(howLong), min = min(howLong), mean = mean(howLong)) %>% 
+  mutate_if(lubridate::is.difftime, round)
+```
+

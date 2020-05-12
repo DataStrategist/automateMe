@@ -82,7 +82,8 @@ createAssets <- function(file, ultimatePath = getwd(),
 
 #' @title analyze the crontab to check when things are running
 #' @description FUNCTION_DESCRIPTION
-#' @param folderContainingTimeLogs Either the commandcenter folder or the folder that contains all the repos
+#' @param folderContainingTimeLogs Either the commandcenter folder or the folder that contains all the repos, default = ".."
+#' @param hrs how many hours worth of logs should be analyzed? default = 24
 #' @return a plot showing when tasks ran
 #' @details DETAILS
 #' @examples
@@ -91,19 +92,14 @@ createAssets <- function(file, ultimatePath = getwd(),
 #'  #EXAMPLE1
 #'  }
 #' }
-#' @seealso
-#'  \code{\link[purrr]{map}}
-#'  \code{\link[tibble]{tibble}}
-#'  \code{\link[dplyr]{filter}},\code{\link[dplyr]{select}}
-#'  \code{\link[ggplot2]{ggplot}},\code{\link[ggplot2]{geom_segment}},\code{\link[ggplot2]{theme}},\code{\link[ggplot2]{element_blank}}
 #' @rdname crontabAnalyzer
 #' @export
 #' @importFrom purrr map
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter select %>%
-#' @importFrom ggplot2 ggplot geom_segment theme element_blank
-#' @importFrom lubridate
-crontabAnalyzer <- function(folderContainingTimeLogs ){
+#' @importFrom ggplot2 ggplot geom_segment theme element_blank aes
+#' @importFrom lubridate interval
+crontabAnalyzer <- function(folderContainingTimeLogs = "..", hrs = 24 ){
 
   ## Load files
   text <- list.files(folderContainingTimeLogs, pattern = "timeRun",
@@ -126,7 +122,7 @@ crontabAnalyzer <- function(folderContainingTimeLogs ){
              gsub(" .+", "", .),
            int = lubridate::interval(sdt, edt)) %>%
     ## Grab only the last 24 hours of stuff, and only if it starts w/ XXX:
-    dplyr::filter(edt > Sys.time() - 3600 * 24, substr(script,1,3) == "XXX") %>%
+    dplyr::filter(edt > Sys.time() - 3600 * hrs, substr(script,1,3) == "XXX") %>%
     dplyr::select(name, sdt, edt, st, et, int)
 
 
@@ -139,6 +135,13 @@ crontabAnalyzer <- function(folderContainingTimeLogs ){
           axis.ticks.x = ggplot2::element_blank())
 }
 
+commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "Outputs", ccFolder = "cc"){
+  # create folder w/ commandcenter inside
+  rmarkdown::render("ccDrafft.Rmd", params = list(
+    pathToRuns,hrs, outputFolders, ccFolder
+  ))
+  # output code
+}
 
 
 
