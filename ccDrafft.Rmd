@@ -50,8 +50,8 @@ df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line(
 ```{r}
 text <- list.dirs(path = pathToRuns) %>% grep(pattern = paste0(outputFolders, "$"), value = TRUE)
 text <- text %>% set_names %>% map(list.files, full.names = TRUE) %>% enframe %>% unnest(value)
-runs <- text$value %>% map(file.info) %>% map(rownames_to_column) %>% bind_rows %>% 
-  mutate(howLong = Sys.time()-mtime)
+runs <- text$value %>% map(file.info) %>% map(rownames_to_column) %>% bind_rows 
+runs <- runs %>% mutate(howLong = Sys.time()-mtime)
 
 text <- left_join(text, runs, by = c("value" = "rowname"))
 
