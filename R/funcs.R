@@ -163,11 +163,17 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "O
 #' @rdname commandCenterCreater
 #' @export
 #' @importFrom rmarkdown render
-commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "Outputs", ccFolder = "cc"){
+commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc"){
+  # pathToRuns = ".."; hrs = 24; outputFolders = "outputs"; ccFolder = "cc"
   # create folder w/ commandcenter inside
-  rmarkdown::render("ccDrafft.Rmd", params = list(
-    pathToRuns,hrs, outputFolders, ccFolder
+  rmarkdown::render("ccDrafft.Rmd", output_file = paste0(ccFolder,"/commandCenter.html"),
+                    params = list(
+    pathToRuns = pathToRuns,
+    hrs = hrs,
+    outputFolders = outputFolders
   ))
+
+
   # output code
 }
 

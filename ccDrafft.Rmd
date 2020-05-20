@@ -1,11 +1,13 @@
 ---
 title: "commandcenterTemplate"
 output: html_document
-parameters:
-  - pathToRuns
-  - hrs
-  - outputFolders
+params:
+  pathToRuns: ".."
+  hrs: 24
+  outputFolders: "outputs"
 ---
+
+
 
 ## Overall Status:
 ```{r setup, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
@@ -14,7 +16,7 @@ options(scipen = 999)
 ```
 
 ```{r overall, warning=FALSE, echo=FALSE}
-text <- list.files(pathToRuns, pattern = ".log",
+text <- list.files(params$pathToRuns, pattern = ".log",
                      full.names = TRUE, recursive = TRUE) %>% set_names %>% 
     map(file) %>% map(readLines) %>% enframe
 
@@ -24,7 +26,7 @@ text %>% unnest(value) %>% filter(grepl(" [eE]rror", value)) %>%
 
 ## Last runs:
 ```{r lastRuns, warning=FALSE, echo=FALSE}
-text <- list.files(pathToRuns, pattern = "timeRun",
+text <- list.files(params$pathToRuns, pattern = "timeRun",
                      full.names = TRUE, recursive = TRUE) %>%
     map(file) %>% map(readLines) %>% unlist
 
@@ -40,7 +42,7 @@ df <-
                    gsub("XXX ", "", .) %>%
                    gsub(" .+", "", .)) %>%
   ## Grab only the last 24 hours of stuff, and only if it starts w/ XXX:
-filter(sdt > Sys.time() - 3600 * hrs, substr(script,1,3) == "XXX") %>%
+filter(sdt > Sys.time() - 3600 * params$hrs, substr(script,1,3) == "XXX") %>%
 select(name, sdt, runtime)
 
 df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line()
@@ -48,8 +50,11 @@ df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line(
 
 ## latest outputs:
 ```{r}
-text <- list.dirs(path = pathToRuns) %>% grep(pattern = paste0(outputFolders, "$"), value = TRUE)
+# browser()
+text <- list.dirs(path = params$pathToRuns) %>% grep(pattern = paste0(params$outputFolders, "$"), value = TRUE)
+
 text <- text %>% set_names %>% map(list.files, full.names = TRUE) %>% enframe %>% unnest(value)
+
 runs <- text$value %>% map(file.info) %>% map(rownames_to_column) %>% bind_rows %>% 
   mutate(howLong = Sys.time()-mtime)
 
