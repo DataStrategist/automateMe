@@ -49,7 +49,7 @@ df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line(
 ```
 
 ## latest outputs:
-```{r}
+```{r warning=FALSE}
 # browser()
 text <- list.dirs(path = params$pathToRuns) %>% grep(pattern = paste0(params$outputFolders, "$"), value = TRUE)
 
