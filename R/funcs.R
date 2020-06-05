@@ -167,15 +167,21 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
   # pathToRuns = ".."; hrs = 24; outputFolders = "outputs"; ccFolder = "../cc"
   # params <- list(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc")
   # create folder w/ commandcenter inside
-  rmarkdown::render("ccDrafft.Rmd", output_file = paste0(ccFolder,"/commandCenter.html"),
-                    params = list(
-    pathToRuns = pathToRuns,
-    hrs = hrs,
-    outputFolders = outputFolders
-  ))
+  file.copy('ccDrafft.Rmd', glue::glue("{ccFolder}/ccDrafft.Rmd"))
+  shContent <- glue::glue("cd {ccFolder}
+  Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",
+                  params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs}, outputFolders = \"{outputFolders}\"))'")
 
+  cat(shContent, file = glue::glue("{ccFolder}/cc.sh"))
 
-  # output code
+  ## now crontab the cc
+  cat("######## All done, now give your runner permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
+      "sudo chmod 777",
+      paste0(ultimatePath, "/", rawName, ".sh")," ",
+      paste0(ultimatePath, "/", rawName, ".log"), " ",
+      paste0(commandCenterPath, "/", rawName, ".timeRun.txt"),
+      "\n\n######## and add your new runner to your crontab by typing crontab -e\n",
+      cronTab)
 }
 
 

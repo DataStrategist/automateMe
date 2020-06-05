@@ -11,6 +11,7 @@ params:
 
 ## Overall Status:
 ```{r setup, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+print(Sys.time())
 library(tidyverse, verbose = FALSE, quietly = TRUE)
 options(scipen = 999)
 ```
@@ -49,7 +50,7 @@ df %>% ggplot(aes(x=sdt, y = runtime, color = name)) + geom_point() + geom_line(
 ```
 
 ## latest outputs:
-```{r warning=FALSE}
+```{r warning=FALSE, echo=FALSE}
 # browser()
 text <- list.dirs(path = params$pathToRuns) %>% grep(pattern = paste0(params$outputFolders, "$"), value = TRUE)
 
