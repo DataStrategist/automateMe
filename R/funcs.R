@@ -161,7 +161,8 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
 
   ## create folder w/ commandcenter inside
   # file.copy('ccDrafft.Rmd', glue::glue("{ccFolder}/ccDrafft.Rmd"))
-  writeLines(cctemp, glue::glue("{ccFolder}/ccDrafft.Rmd"))
+  template <- readLines("https://raw.githubusercontent.com/DataStrategist/automateMe/master/ccDrafft.Rmd")
+  writeLines(template, glue::glue("{ccFolder}/ccDrafft.Rmd"))
   shContent <- glue::glue("cd {ccFolder}
   Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",
                   params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs}, outputFolders = \"{outputFolders}\"))'")
