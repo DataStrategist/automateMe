@@ -7,7 +7,8 @@
 #'  place FULL path here , Default: getwd()
 #' @param min in which minute(s) should the script run? 0-59, or \* for every minute, or
 #' comma seperated list like 1,10,20 means minute 1, 10, 20, or -	range of values like
-#' 1-9 means 1,2,3,4,5,6,7,8,9, or /	step values like \*/15 means every fifteen minutes
+#' 1-9 means 1,2,3,4,5,6,7,8,9, or /	step values like \*/15 means every fifteen minutes. Default 1,
+#' which means that it'll run once an hour (on minute 1 of every hour of every day of every...)
 #' @param h in which hour(s) should the script run? 0-23, and "\*", ",", "-", "/" accepted
 #' @param dayOfMonth in what days of the month should run? 1-31, , and "\*", ",", "-", "/" accepted
 #' @param month in what months should the script run? 1-12, and "\*", ",", "-", "/" accepted
@@ -31,7 +32,7 @@
 #' @export
 #' @importFrom amitFuncs right
 createAssets <- function(file, ultimatePath = getwd(),
-                         commandCenterPath = getwd(), min = "*", h = "*",
+                         commandCenterPath = getwd(), min = "1", h = "*",
                          dayOfMonth = "*", month = "*", dayOfWeek = "*"){
   # browser()
   ## get extensionless name
@@ -141,6 +142,15 @@ crontabAnalyzer <- function(folderContainingTimeLogs = "..", hrs = 24 ){
 #' @param hrs how many hours ago, Default: 24
 #' @param outputFolders what do you name your output folders?, Default: 'Outputs'
 #' @param ccFolder what is the name of the folder for your commandcenter?, Default: 'cc'
+#' @param min in which minute(s) should the script run? 0-59, or \* for every minute, or
+#' comma seperated list like 1,10,20 means minute 1, 10, 20, or -	range of values like
+#' 1-9 means 1,2,3,4,5,6,7,8,9, or /	step values like \*/15 means every fifteen minutes. Default 15,
+#' which means that it'll run once an hour (on minute 15 of every hour of every day of every...)
+#' @param h in which hour(s) should the script run? 0-23, and "\*", ",", "-", "/" accepted
+#' @param dayOfMonth in what days of the month should run? 1-31, , and "\*", ",", "-", "/" accepted
+#' @param month in what months should the script run? 1-12, and "\*", ",", "-", "/" accepted
+#' @param dayOfWeek in what days of the week should the script run? 0-6 (starting sunday),
+#' and "\*", ",", "-", "/" accepted
 #' @return outputs a file in the commandcenter
 #' @details DETAILS
 #' @examples
@@ -155,7 +165,9 @@ crontabAnalyzer <- function(folderContainingTimeLogs = "..", hrs = 24 ){
 #' @export
 #' @importFrom rmarkdown render
 #' @importFrom glue glue
-commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc"){
+commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "outputs",
+                                 ccFolder = "../cc", min = "15", h = "*",
+                                 dayOfMonth = "*", month = "*", dayOfWeek = "*"){
   # pathToRuns = ".."; hrs = 24; outputFolders = "outputs"; ccFolder = "../cc"
   # params <- list(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc")
 
@@ -164,18 +176,19 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
   template <- readLines("https://raw.githubusercontent.com/DataStrategist/automateMe/master/ccDrafft.Rmd")
   writeLines(template, glue::glue("{ccFolder}/ccDrafft.Rmd"))
   shContent <- glue::glue("cd {ccFolder}
-  Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",
-                  params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs}, outputFolders = \"{outputFolders}\"))'")
+  Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs}, outputFolders = \"{outputFolders}\"))'")
 
   cat(shContent, file = glue::glue("{ccFolder}/cc.sh"))
 
   ## now crontab the cc
+  cronTab <- paste0(min, " ", h," ", dayOfMonth, " ", month, " ", dayOfWeek,
+                    " ", paste0(ultimatePath, "/cc.sh"), " 2>&1")
+
   cat("######## All done, now let's make this commandCenter run every so often. \n
       First, let's give it permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
-      "sudo chmod 777",
-      paste0(ultimatePath, "/", rawName, ".sh")," ",
-      paste0(ultimatePath, "/", rawName, ".log"), " ",
-      paste0(commandCenterPath, "/", rawName, ".timeRun.txt"),
+      paste0("sudo chmod 777 ", ccFolder, "cc.sh"),
+      paste0(ccFolder, "/cc.sh")," ",
+      paste0(ccFolder, "/cc.log"),
       "\n\n######## and add your new runner to your crontab by typing crontab -e\n",
       cronTab)
 
