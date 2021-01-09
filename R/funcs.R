@@ -135,16 +135,7 @@ crontabAnalyzer <- function(folderContainingTimeLogs = "..", hrs = 24 ){
           axis.ticks.x = ggplot2::element_blank())
 }
 
-commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "Outputs", ccFolder = "cc"){
-  # create folder w/ commandcenter inside
-  rmarkdown::render("ccDrafft.Rmd", params = list(
-    pathToRuns,hrs, outputFolders, ccFolder
-  ))
-  # output code
-}
-
-
-#' @title create a commandcenter file
+#' @title create a commandcenter file. This is the function you would run to create the new dashboard
 #' @description FUNCTION_DESCRIPTION
 #' @param pathToRuns path to all the runner folders, Default: '..'
 #' @param hrs how many hours ago, Default: 24
@@ -163,11 +154,14 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "O
 #' @rdname commandCenterCreater
 #' @export
 #' @importFrom rmarkdown render
+#' @importFrom glue glue
 commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc"){
   # pathToRuns = ".."; hrs = 24; outputFolders = "outputs"; ccFolder = "../cc"
   # params <- list(pathToRuns = "..", hrs = 24, outputFolders = "outputs", ccFolder = "../cc")
-  # create folder w/ commandcenter inside
-  file.copy('ccDrafft.Rmd', glue::glue("{ccFolder}/ccDrafft.Rmd"))
+
+  ## create folder w/ commandcenter inside
+  # file.copy('ccDrafft.Rmd', glue::glue("{ccFolder}/ccDrafft.Rmd"))
+  writeLines(cctemp, glue::glue("{ccFolder}/ccDrafft.Rmd"))
   shContent <- glue::glue("cd {ccFolder}
   Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",
                   params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs}, outputFolders = \"{outputFolders}\"))'")
@@ -175,13 +169,16 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
   cat(shContent, file = glue::glue("{ccFolder}/cc.sh"))
 
   ## now crontab the cc
-  cat("######## All done, now give your runner permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
+  cat("######## All done, now let's make this commandCenter run every so often. \n
+      First, let's give it permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
       "sudo chmod 777",
       paste0(ultimatePath, "/", rawName, ".sh")," ",
       paste0(ultimatePath, "/", rawName, ".log"), " ",
       paste0(commandCenterPath, "/", rawName, ".timeRun.txt"),
       "\n\n######## and add your new runner to your crontab by typing crontab -e\n",
       cronTab)
+
+
 }
 
 

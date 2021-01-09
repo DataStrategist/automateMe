@@ -2,13 +2,13 @@
 % Please edit documentation in R/funcs.R
 \name{commandCenterCreater}
 \alias{commandCenterCreater}
-\title{create a commandcenter file}
+\title{create a commandcenter file. This is the function you would run to create the new dashboard}
 \usage{
 commandCenterCreater(
   pathToRuns = "..",
   hrs = 24,
-  outputFolders = "Outputs",
-  ccFolder = "cc"
+  outputFolders = "outputs",
+  ccFolder = "../cc"
 )
 }
 \arguments{
