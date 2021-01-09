@@ -182,7 +182,7 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
 
   ## now crontab the cc
   cronTab <- paste0(min, " ", h," ", dayOfMonth, " ", month, " ", dayOfWeek,
-                    " ", paste0(ultimatePath, "/cc.sh"), " 2>&1")
+                    " ", paste0(ccFolder, "/cc.sh"), " 2>&1")
 
   cat("######## All done, now let's make this commandCenter run every so often. \n
       First, let's give it permissions by typing this into the TERMINAL (not the CONSOLE)!:\n",
@@ -190,7 +190,10 @@ commandCenterCreater <- function(pathToRuns = "..", hrs = 24, outputFolders = "o
       paste0(ccFolder, "/cc.sh")," ",
       paste0(ccFolder, "/cc.log"),
       "\n\n######## and add your new runner to your crontab by typing crontab -e\n",
-      cronTab)
+      cronTab,
+      "This will create a new dashboard in the selected folder. You might want to create a symlink\n
+      to somewhere where you can see it. For example, if you're running nginx, you might want to symlink \n
+      the whole cc folder to /var/www/html/. Here's the symlink syntax ln -s SOURCE_FOLDER FINAL_FOLDER")
 
 
 }

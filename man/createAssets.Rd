@@ -8,7 +8,7 @@ createAssets(
   file,
   ultimatePath = getwd(),
   commandCenterPath = getwd(),
-  min = "*",
+  min = "1",
   h = "*",
   dayOfMonth = "*",
   month = "*",
@@ -25,7 +25,8 @@ place FULL path here , Default: getwd()}
 
 \item{min}{in which minute(s) should the script run? 0-59, or \* for every minute, or
 comma seperated list like 1,10,20 means minute 1, 10, 20, or -    range of values like
-1-9 means 1,2,3,4,5,6,7,8,9, or /    step values like \*/15 means every fifteen minutes}
+1-9 means 1,2,3,4,5,6,7,8,9, or /    step values like \*/15 means every fifteen minutes. Default 1,
+which means that it'll run once an hour (on minute 1 of every hour of every day of every...)}
 
 \item{h}{in which hour(s) should the script run? 0-23, and "\*", ",", "-", "/" accepted}
 
