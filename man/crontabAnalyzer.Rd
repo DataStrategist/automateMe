@@ -4,12 +4,12 @@
 \alias{crontabAnalyzer}
 \title{analyze the crontab to check when things are running}
 \usage{
-crontabAnalyzer(folderContainingTimeLogs = "..", hrs = 24)
+crontabAnalyzer(ccFolder = "..", hour = 24)
 }
 \arguments{
-\item{folderContainingTimeLogs}{Either the commandcenter folder or the folder that contains all the repos, default = ".."}
+\item{ccFolder}{Either the commandcenter folder or the folder that contains all the repos, default = ".."}
 
-\item{hrs}{how many hours worth of logs should be analyzed? default = 24}
+\item{hour}{how many hours worth of logs should be analyzed? default = 24}
 }
 \value{
 a plot showing when tasks ran
