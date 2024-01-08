@@ -39,6 +39,10 @@ createAssets <- function(file, ultimatePath = getwd(),
   ## get extensionless name
   rawName <- gsub("\\.[Rrpy]$", "", file)
 
+  cat("Make sure all the folders exist, and that you have access to them!")
+  
+  ## system(glue("stat {commandCenterPath}"), intern = TRUE) %>% grep("Access: \\(", ., value = TRUE)
+
   # Create sh file ----------------------------------------------------------
 
   if (grepl("R$", file)) {
@@ -71,7 +75,7 @@ createAssets <- function(file, ultimatePath = getwd(),
   echo "XXX {rawName} $START $DIFF"')
   }
 
-  cat(shContent, file = glue(" {ultimatePath}/{rawName}.sh"))
+  cat(shContent, file = glue("{ultimatePath}/{rawName}.sh"))
 
   # Create empty log files ---------------------------------------------------------
 
