@@ -39,10 +39,6 @@ createAssets <- function(file, ultimatePath = getwd(),
   ## get extensionless name
   rawName <- gsub("\\.[Rrpy]$", "", file)
 
-  cat("Make sure all the folders exist, and that you have access to them!")
-  
-  ## system(glue("stat {commandCenterPath}"), intern = TRUE) %>% grep("Access: \\(", ., value = TRUE)
-
   # Create sh file ----------------------------------------------------------
 
   if (grepl("R$", file)) {
@@ -75,7 +71,7 @@ createAssets <- function(file, ultimatePath = getwd(),
   echo "XXX {rawName} $START $DIFF"')
   }
 
-  cat(shContent, file = glue("{ultimatePath}/{rawName}.sh"))
+  cat(shContent, file = glue(" {ultimatePath}/{rawName}.sh"))
 
   # Create empty log files ---------------------------------------------------------
 
@@ -138,7 +134,7 @@ commandCenterCreater <- function(pathToRuns = "..", hrs_lag = 24, outputFolders 
   template <- readLines("https://raw.githubusercontent.com/DataStrategist/automateMe/master/ccDrafft.Rmd")
   writeLines(template, glue("{ccFolder}/ccDrafft.Rmd"))
   shContent <- glue("cd {ccFolder}
-  Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",params = list(pathToRuns = \"{pathToRuns}\", hour = {hrs_lag}, outputFolders = \"{outputFolders}\"))'")
+  Rscript -e 'rmarkdown::render(\"ccDrafft.Rmd\", output_file = \"commandCenter.html\",params = list(pathToRuns = \"{pathToRuns}\", hrs = {hrs_lag}, outputFolders = \"{outputFolders}\"))'")
 
   cat(shContent, file = glue("{ccFolder}/cc.sh"))
 
